@@ -112,6 +112,7 @@
             this.txtPassword.ForeColor = System.Drawing.Color.White;
             this.txtPassword.Location = new System.Drawing.Point(54, 351);
             this.txtPassword.Name = "txtPassword";
+            this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(362, 48);
             this.txtPassword.TabIndex = 6;
             this.txtPassword.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
