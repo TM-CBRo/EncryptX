@@ -99,7 +99,7 @@ namespace EncryptX.Forms
                 this.Hide();
 
                 // 2. Deschidem fereastra principala
-                MainForm main = new MainForm();
+                MainForm main = new MainForm(user);
                 main.ShowDialog(); // Asteptam aici pana se inchide Main
 
                 // 3. Cand se inchide Main, inchidem de tot aplicatia

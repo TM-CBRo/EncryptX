@@ -7,16 +7,17 @@ namespace EncryptX.Services
 {
     public class AesService
     {
-        // Aceasta functie cripteaza un text folosind o parola
+        // ==========================================
+        // PARTEA 1: TEXT (O aveai deja)
+        // ==========================================
         public string EncryptText(string plainText, string password)
         {
-            // 1. Generam sarea (Salt) si derivam cheia
             byte[] salt = GenerateRandomEntropy();
-            byte[] iv = GenerateRandomEntropy(16); // IV trebuie sa fie 16 bytes
+            byte[] iv = GenerateRandomEntropy(16);
 
             using (var passwordDerive = new Rfc2898DeriveBytes(password, salt, 50000))
             {
-                byte[] key = passwordDerive.GetBytes(32); // AES-256
+                byte[] key = passwordDerive.GetBytes(32);
 
                 using (var aes = Aes.Create())
                 {
@@ -25,7 +26,6 @@ namespace EncryptX.Services
 
                     using (var ms = new MemoryStream())
                     {
-                        // Scriem sarea si IV-ul la inceputul rezultatului (necriptate)
                         ms.Write(salt, 0, salt.Length);
                         ms.Write(iv, 0, iv.Length);
 
@@ -35,22 +35,18 @@ namespace EncryptX.Services
                             cs.Write(plainBytes, 0, plainBytes.Length);
                             cs.FlushFinalBlock();
                         }
-
-                        // Returnam totul ca un sir Base64 (litere si cifre)
                         return Convert.ToBase64String(ms.ToArray());
                     }
                 }
             }
         }
 
-        // Aceasta functie decripteaza textul
         public string DecryptText(string encryptedBase64, string password)
         {
             byte[] cipherBytesTotal = Convert.FromBase64String(encryptedBase64);
 
             using (var msIn = new MemoryStream(cipherBytesTotal))
             {
-                // Citim sarea (32 bytes) si IV-ul (16 bytes) de la inceput
                 byte[] salt = new byte[32];
                 byte[] iv = new byte[16];
                 msIn.Read(salt, 0, 32);
@@ -76,7 +72,70 @@ namespace EncryptX.Services
             }
         }
 
-        // Functie ajutatoare pentru generare aleatoare
+        // ==========================================
+        // PARTEA 2: FISIERE 
+        // ==========================================
+        public void EncryptFile(string inputFile, string outputFile, string password)
+        {
+            byte[] salt = GenerateRandomEntropy();
+            byte[] iv = GenerateRandomEntropy(16);
+
+            using (var passwordDerive = new Rfc2898DeriveBytes(password, salt, 50000))
+            {
+                byte[] key = passwordDerive.GetBytes(32);
+
+                using (var aes = Aes.Create())
+                {
+                    aes.Key = key;
+                    aes.IV = iv;
+
+                    using (var fsOut = new FileStream(outputFile, FileMode.Create))
+                    {
+                        // Scriem Sarea si IV-ul la inceputul fisierului
+                        fsOut.Write(salt, 0, salt.Length);
+                        fsOut.Write(iv, 0, iv.Length);
+
+                        using (var cs = new CryptoStream(fsOut, aes.CreateEncryptor(), CryptoStreamMode.Write))
+                        using (var fsIn = new FileStream(inputFile, FileMode.Open))
+                        {
+                            // Copiem datele prin tunelul de criptare
+                            fsIn.CopyTo(cs);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void DecryptFile(string inputFile, string outputFile, string password)
+        {
+            using (var fsIn = new FileStream(inputFile, FileMode.Open))
+            {
+                byte[] salt = new byte[32];
+                byte[] iv = new byte[16];
+
+                // Citim Sarea si IV-ul de la inceput
+                fsIn.Read(salt, 0, salt.Length);
+                fsIn.Read(iv, 0, iv.Length);
+
+                using (var passwordDerive = new Rfc2898DeriveBytes(password, salt, 50000))
+                {
+                    byte[] key = passwordDerive.GetBytes(32);
+
+                    using (var aes = Aes.Create())
+                    {
+                        aes.Key = key;
+                        aes.IV = iv;
+
+                        using (var cs = new CryptoStream(fsIn, aes.CreateDecryptor(), CryptoStreamMode.Read))
+                        using (var fsOut = new FileStream(outputFile, FileMode.Create))
+                        {
+                            cs.CopyTo(fsOut);
+                        }
+                    }
+                }
+            }
+        }
+
         private byte[] GenerateRandomEntropy(int size = 32)
         {
             var randomBytes = new byte[size];
