@@ -28,8 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
             this.btnDecryptFile = new System.Windows.Forms.Button();
             this.btnEncryptFile = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
@@ -52,6 +57,7 @@
             this.gridHistory = new System.Windows.Forms.DataGridView();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridHistory)).BeginInit();
@@ -71,6 +77,8 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
+            this.tabPage1.Controls.Add(this.panel1);
             this.tabPage1.Controls.Add(this.btnDecryptFile);
             this.tabPage1.Controls.Add(this.btnEncryptFile);
             this.tabPage1.Controls.Add(this.label7);
@@ -86,11 +94,49 @@
             this.tabPage1.Size = new System.Drawing.Size(872, 886);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "File Encryption";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(35)))), ((int)(((byte)(35)))));
+            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(866, 40);
+            this.panel1.TabIndex = 8;
+            // 
+            // button1
+            // 
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.ForeColor = System.Drawing.Color.White;
+            this.button1.Location = new System.Drawing.Point(806, -14);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(73, 57);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "x";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(201)))), ((int)(((byte)(240)))));
+            this.label3.Location = new System.Drawing.Point(10, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(330, 37);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "ENCRYPTX DASHBOARD";
             // 
             // btnDecryptFile
             // 
-            this.btnDecryptFile.BackColor = System.Drawing.Color.RoyalBlue;
+            this.btnDecryptFile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(201)))), ((int)(((byte)(240)))));
+            this.btnDecryptFile.FlatAppearance.BorderSize = 0;
+            this.btnDecryptFile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDecryptFile.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnDecryptFile.Location = new System.Drawing.Point(516, 676);
             this.btnDecryptFile.Name = "btnDecryptFile";
             this.btnDecryptFile.Size = new System.Drawing.Size(245, 104);
@@ -101,7 +147,10 @@
             // 
             // btnEncryptFile
             // 
-            this.btnEncryptFile.BackColor = System.Drawing.Color.OrangeRed;
+            this.btnEncryptFile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(201)))), ((int)(((byte)(240)))));
+            this.btnEncryptFile.FlatAppearance.BorderSize = 0;
+            this.btnEncryptFile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEncryptFile.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEncryptFile.Location = new System.Drawing.Point(142, 676);
             this.btnEncryptFile.Name = "btnEncryptFile";
             this.btnEncryptFile.Size = new System.Drawing.Size(245, 104);
@@ -113,6 +162,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
+            this.label7.ForeColor = System.Drawing.Color.White;
             this.label7.Location = new System.Drawing.Point(293, 528);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(305, 40);
@@ -131,6 +181,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
+            this.label6.ForeColor = System.Drawing.Color.White;
             this.label6.Location = new System.Drawing.Point(270, 326);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(360, 40);
@@ -139,16 +190,22 @@
             // 
             // btnBrowseFile
             // 
+            this.btnBrowseFile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(201)))), ((int)(((byte)(240)))));
+            this.btnBrowseFile.FlatAppearance.BorderSize = 0;
+            this.btnBrowseFile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBrowseFile.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBrowseFile.ForeColor = System.Drawing.Color.Black;
             this.btnBrowseFile.Location = new System.Drawing.Point(652, 168);
             this.btnBrowseFile.Name = "btnBrowseFile";
             this.btnBrowseFile.Size = new System.Drawing.Size(176, 87);
             this.btnBrowseFile.TabIndex = 2;
             this.btnBrowseFile.Text = "Search";
-            this.btnBrowseFile.UseVisualStyleBackColor = true;
+            this.btnBrowseFile.UseVisualStyleBackColor = false;
             this.btnBrowseFile.Click += new System.EventHandler(this.btnBrowseFile_Click);
             // 
             // txtFilePath
             // 
+            this.txtFilePath.BackColor = System.Drawing.SystemColors.ControlLight;
             this.txtFilePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtFilePath.Location = new System.Drawing.Point(26, 168);
             this.txtFilePath.Multiline = true;
@@ -161,6 +218,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.ForeColor = System.Drawing.Color.White;
             this.label5.Location = new System.Drawing.Point(333, 62);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(251, 40);
@@ -169,6 +227,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
             this.tabPage2.Controls.Add(this.txtOutput);
             this.tabPage2.Controls.Add(this.label4);
             this.tabPage2.Controls.Add(this.btnDecrypt);
@@ -183,10 +242,12 @@
             this.tabPage2.Size = new System.Drawing.Size(872, 886);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Text Encryption";
-            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // txtOutput
             // 
+            this.txtOutput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(35)))), ((int)(((byte)(35)))));
+            this.txtOutput.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtOutput.ForeColor = System.Drawing.Color.White;
             this.txtOutput.Location = new System.Drawing.Point(34, 582);
             this.txtOutput.Multiline = true;
             this.txtOutput.Name = "txtOutput";
@@ -198,6 +259,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ForeColor = System.Drawing.Color.White;
             this.label4.Location = new System.Drawing.Point(366, 518);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(134, 38);
@@ -206,7 +268,10 @@
             // 
             // btnDecrypt
             // 
-            this.btnDecrypt.BackColor = System.Drawing.Color.CornflowerBlue;
+            this.btnDecrypt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(201)))), ((int)(((byte)(240)))));
+            this.btnDecrypt.FlatAppearance.BorderSize = 0;
+            this.btnDecrypt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDecrypt.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnDecrypt.Location = new System.Drawing.Point(510, 385);
             this.btnDecrypt.Name = "btnDecrypt";
             this.btnDecrypt.Size = new System.Drawing.Size(264, 113);
@@ -217,7 +282,10 @@
             // 
             // btnEncrypt
             // 
-            this.btnEncrypt.BackColor = System.Drawing.Color.OrangeRed;
+            this.btnEncrypt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(201)))), ((int)(((byte)(240)))));
+            this.btnEncrypt.FlatAppearance.BorderSize = 0;
+            this.btnEncrypt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEncrypt.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEncrypt.Location = new System.Drawing.Point(108, 385);
             this.btnEncrypt.Name = "btnEncrypt";
             this.btnEncrypt.Size = new System.Drawing.Size(264, 113);
@@ -228,6 +296,9 @@
             // 
             // txtPassword
             // 
+            this.txtPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(35)))), ((int)(((byte)(35)))));
+            this.txtPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtPassword.ForeColor = System.Drawing.Color.White;
             this.txtPassword.Location = new System.Drawing.Point(34, 283);
             this.txtPassword.Multiline = true;
             this.txtPassword.Name = "txtPassword";
@@ -239,6 +310,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.Color.White;
             this.label2.Location = new System.Drawing.Point(366, 230);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(194, 40);
@@ -247,6 +319,9 @@
             // 
             // txtInput
             // 
+            this.txtInput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(35)))), ((int)(((byte)(35)))));
+            this.txtInput.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtInput.ForeColor = System.Drawing.Color.White;
             this.txtInput.Location = new System.Drawing.Point(34, 92);
             this.txtInput.Multiline = true;
             this.txtInput.Name = "txtInput";
@@ -257,6 +332,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(316, 30);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(277, 40);
@@ -277,23 +353,48 @@
             // 
             // btnRefresh
             // 
-            this.btnRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefresh.Location = new System.Drawing.Point(364, 774);
+            this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(201)))), ((int)(((byte)(240)))));
+            this.btnRefresh.FlatAppearance.BorderSize = 0;
+            this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRefresh.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRefresh.Location = new System.Drawing.Point(352, 776);
             this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(149, 57);
+            this.btnRefresh.Size = new System.Drawing.Size(173, 57);
             this.btnRefresh.TabIndex = 1;
             this.btnRefresh.Text = "Refresh";
-            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.UseVisualStyleBackColor = false;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // gridHistory
             // 
             this.gridHistory.AllowUserToAddRows = false;
             this.gridHistory.AllowUserToDeleteRows = false;
+            this.gridHistory.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.gridHistory.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
+            this.gridHistory.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(35)))), ((int)(((byte)(35)))));
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridHistory.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridHistory.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(201)))), ((int)(((byte)(240)))));
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.gridHistory.DefaultCellStyle = dataGridViewCellStyle2;
             this.gridHistory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridHistory.EnableHeadersVisualStyles = false;
+            this.gridHistory.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
             this.gridHistory.Location = new System.Drawing.Point(3, 3);
             this.gridHistory.Name = "gridHistory";
+            this.gridHistory.RowHeadersVisible = false;
             this.gridHistory.RowHeadersWidth = 92;
             this.gridHistory.RowTemplate.Height = 37;
             this.gridHistory.Size = new System.Drawing.Size(866, 880);
@@ -303,9 +404,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
             this.ClientSize = new System.Drawing.Size(892, 943);
             this.Controls.Add(this.tabControl1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Margin = new System.Windows.Forms.Padding(7);
             this.MaximizeBox = false;
             this.Name = "MainForm";
@@ -315,6 +417,8 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
@@ -347,6 +451,9 @@
         private System.Windows.Forms.Button btnDecryptFile;
         private System.Windows.Forms.DataGridView gridHistory;
         private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button button1;
     }
 }
 
