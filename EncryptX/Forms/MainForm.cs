@@ -12,6 +12,7 @@ namespace EncryptX.Forms
         private readonly LogService _logService;
         private readonly string _currentUser;
 
+
         public MainForm(string username)
         {
             InitializeComponent();
@@ -206,6 +207,21 @@ namespace EncryptX.Forms
         private void button1_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            tabControl1.SelectedIndex = 0;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            tabControl1.SelectedIndex = 1;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            tabControl1.SelectedIndex = 2;
         }
     }
 }
