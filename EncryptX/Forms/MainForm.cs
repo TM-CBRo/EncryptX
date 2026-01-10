@@ -1,6 +1,7 @@
 ﻿using EncryptX.Services;
 using System;
 using System.IO;
+using System.Linq; // pt verificarea parolei
 using System.Security.Cryptography;
 using System.Windows.Forms;
 
@@ -12,15 +13,50 @@ namespace EncryptX.Forms
         private readonly LogService _logService;
         private readonly string _currentUser;
 
-
         public MainForm(string username)
         {
             InitializeComponent();
-            _aesService = new AesService(); // Pornim motorul
+            _aesService = new AesService(); // Pornim motorul AES
             _logService = new LogService(); // Pornim serviciul de log-uri
             _currentUser = username;        // Salvam cine a intrat
 
             this.Text = $"EncryptX Dashboard - Welcome, {_currentUser}!";
+        }
+
+        // =========================================================
+        //  NOUA FUNCTIE DE VALIDARE AVANSATA
+        // =========================================================
+        private bool IsPasswordSecure(string password)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                MessageBox.Show("Te rog introdu o parola!", "Atentie", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            // 1. Verificare Lungime (Minim 6)
+            if (password.Length < 6)
+            {
+                MessageBox.Show("Parola este prea scurta!\nTrebuie sa aiba minim 6 caractere.", "Securitate", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            // 2. Verificare Litera Mare (A-Z)
+            if (!password.Any(char.IsUpper))
+            {
+                MessageBox.Show("Parola trebuie sa contina cel putin o litera mare (A-Z)!", "Securitate Slaba", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            // 3. Verificare Simbol (Orice nu e litera sau cifra)
+            // Aceasta linie cauta semne gen: ! @ # $ % ^ & * ( ) _ - + =
+            if (!password.Any(ch => !char.IsLetterOrDigit(ch)))
+            {
+                MessageBox.Show("Parola trebuie sa contina cel putin un simbol special (ex: @, #, !, $)", "Securitate Slaba", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            return true; // Parola a trecut toate testele!
         }
 
         // =========================================================
@@ -32,18 +68,20 @@ namespace EncryptX.Forms
             string text = txtInput.Text;
             string pass = txtPassword.Text;
 
-            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(pass))
+            if (string.IsNullOrEmpty(text))
             {
-                MessageBox.Show("Introdu textul si parola!", "Atentie", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Introdu textul!", "Atentie", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
+            // Validare Parola
+            if (!IsPasswordSecure(pass)) return;
 
             try
             {
                 string result = _aesService.EncryptText(text, pass);
                 txtOutput.Text = result;
 
-                // Logam actiunea
                 _logService.AddLog(_currentUser, "Text Message", "TEXT_ENCRYPT");
 
                 MessageBox.Show("Criptare reusita!", "Succes", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -59,18 +97,20 @@ namespace EncryptX.Forms
             string textCriptat = txtInput.Text;
             string pass = txtPassword.Text;
 
-            if (string.IsNullOrEmpty(textCriptat) || string.IsNullOrEmpty(pass))
+            if (string.IsNullOrEmpty(textCriptat))
             {
-                MessageBox.Show("Introdu textul criptat si parola!", "Atentie", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Introdu textul criptat!", "Atentie", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
+            // Validare Parola
+            if (!IsPasswordSecure(pass)) return;
 
             try
             {
                 string result = _aesService.DecryptText(textCriptat, pass);
                 txtOutput.Text = result;
 
-                // Logam actiunea
                 _logService.AddLog(_currentUser, "Text Message", "TEXT_DECRYPT");
 
                 MessageBox.Show("Decriptare reusita!", "Succes", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -111,11 +151,9 @@ namespace EncryptX.Forms
                 MessageBox.Show("Te rog alege un fisier valid!", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            if (string.IsNullOrEmpty(password))
-            {
-                MessageBox.Show("Te rog pune o parola!", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+
+            // Validare Parola
+            if (!IsPasswordSecure(password)) return;
 
             try
             {
@@ -150,6 +188,9 @@ namespace EncryptX.Forms
                 return;
             }
 
+            // Validare Parola
+            if (!IsPasswordSecure(password)) return;
+
             try
             {
                 string outputFile = inputFile.Substring(0, inputFile.Length - 4);
@@ -177,22 +218,24 @@ namespace EncryptX.Forms
         }
 
         // =========================================================
-        // TAB 3: ISTORIC (Refresh Logic)
+        // TAB 3: ISTORIC
         // =========================================================
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             try
             {
                 var logs = _logService.GetLogs();
-
-                
-                gridHistory.DataSource = logs; 
+                gridHistory.DataSource = logs;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Eroare la incarcarea istoricului: " + ex.Message);
             }
         }
+
+        // =========================================================
+        // Navigatie si Inchidere (Butoanele tale personalizate)
+        // =========================================================
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -201,25 +244,24 @@ namespace EncryptX.Forms
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e) // Butonul X
         {
             Application.Exit();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e) // Tab Files
         {
             tabControl1.SelectedIndex = 0;
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e) // Tab Text
         {
             tabControl1.SelectedIndex = 1;
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e) // Tab History
         {
             tabControl1.SelectedIndex = 2;
         }
