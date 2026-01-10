@@ -1,7 +1,8 @@
 ﻿using EncryptX.Services;
 using System;
+using System.Drawing;
 using System.IO;
-using System.Linq; // pt verificarea parolei
+using System.Linq;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 
@@ -16,254 +17,122 @@ namespace EncryptX.Forms
         public MainForm(string username)
         {
             InitializeComponent();
-            _aesService = new AesService(); // Pornim motorul AES
-            _logService = new LogService(); // Pornim serviciul de log-uri
-            _currentUser = username;        // Salvam cine a intrat
+            _aesService = new AesService();
+            _logService = new LogService();
+            _currentUser = username;
 
             this.Text = $"EncryptX Dashboard - Welcome, {_currentUser}!";
+
+            // Design Adaptiv
+            ConfigureInterfaceForUser();
         }
 
-        // =========================================================
-        //  NOUA FUNCTIE DE VALIDARE AVANSATA
-        // =========================================================
+        private void ConfigureInterfaceForUser()
+        {
+            bool isAdmin = _currentUser.Equals("admin", StringComparison.OrdinalIgnoreCase);
+
+            if (isAdmin)
+            {
+                // Admin: Vede tot
+                btnDeleteUser.Visible = true;
+            }
+            else
+            {
+                // User: Nu vede Delete, si Refresh e centrat
+                btnDeleteUser.Visible = false;
+
+                int parentWidth = tabControl1.Width;
+                int centerX = (parentWidth - btnRefresh.Width) / 2;
+                btnRefresh.Location = new Point(centerX, btnRefresh.Location.Y);
+            }
+        }
+
         private bool IsPasswordSecure(string password)
         {
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                MessageBox.Show("Te rog introdu o parola!", "Atentie", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
-
-            // 1. Verificare Lungime (Minim 6)
-            if (password.Length < 6)
-            {
-                MessageBox.Show("Parola este prea scurta!\nTrebuie sa aiba minim 6 caractere.", "Securitate", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
-
-            // 2. Verificare Litera Mare (A-Z)
-            if (!password.Any(char.IsUpper))
-            {
-                MessageBox.Show("Parola trebuie sa contina cel putin o litera mare (A-Z)!", "Securitate Slaba", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
-
-            // 3. Verificare Simbol (Orice nu e litera sau cifra)
-            // Aceasta linie cauta semne gen: ! @ # $ % ^ & * ( ) _ - + =
-            if (!password.Any(ch => !char.IsLetterOrDigit(ch)))
-            {
-                MessageBox.Show("Parola trebuie sa contina cel putin un simbol special (ex: @, #, !, $)", "Securitate Slaba", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
-
-            return true; // Parola a trecut toate testele!
+            if (string.IsNullOrWhiteSpace(password)) { MessageBox.Show("Introdu o parola!"); return false; }
+            if (password.Length < 6) { MessageBox.Show("Minim 6 caractere!"); return false; }
+            if (!password.Any(char.IsUpper)) { MessageBox.Show("Minim o litera mare!"); return false; }
+            if (!password.Any(ch => !char.IsLetterOrDigit(ch))) { MessageBox.Show("Minim un simbol special!"); return false; }
+            return true;
         }
 
-        // =========================================================
-        // TAB 2: TEXT (Logic pentru Text)
-        // =========================================================
-
+        // --- BUTOANE TEXT ---
         private void btnEncrypt_Click(object sender, EventArgs e)
         {
-            string text = txtInput.Text;
-            string pass = txtPassword.Text;
-
-            if (string.IsNullOrEmpty(text))
-            {
-                MessageBox.Show("Introdu textul!", "Atentie", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Validare Parola
-            if (!IsPasswordSecure(pass)) return;
-
-            try
-            {
-                string result = _aesService.EncryptText(text, pass);
-                txtOutput.Text = result;
-
-                _logService.AddLog(_currentUser, "Text Message", "TEXT_ENCRYPT");
-
-                MessageBox.Show("Criptare reusita!", "Succes", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Eroare: " + ex.Message);
-            }
+            if (string.IsNullOrEmpty(txtInput.Text)) return;
+            if (!IsPasswordSecure(txtPassword.Text)) return;
+            try { txtOutput.Text = _aesService.EncryptText(txtInput.Text, txtPassword.Text); _logService.AddLog(_currentUser, "Text", "TEXT_ENCRYPT"); }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
         private void btnDecrypt_Click(object sender, EventArgs e)
         {
-            string textCriptat = txtInput.Text;
-            string pass = txtPassword.Text;
-
-            if (string.IsNullOrEmpty(textCriptat))
-            {
-                MessageBox.Show("Introdu textul criptat!", "Atentie", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Validare Parola
-            if (!IsPasswordSecure(pass)) return;
-
-            try
-            {
-                string result = _aesService.DecryptText(textCriptat, pass);
-                txtOutput.Text = result;
-
-                _logService.AddLog(_currentUser, "Text Message", "TEXT_DECRYPT");
-
-                MessageBox.Show("Decriptare reusita!", "Succes", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (CryptographicException)
-            {
-                MessageBox.Show("Parola gresita sau text corupt!", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Eroare: " + ex.Message);
-            }
+            if (string.IsNullOrEmpty(txtInput.Text)) return;
+            if (!IsPasswordSecure(txtPassword.Text)) return;
+            try { txtOutput.Text = _aesService.DecryptText(txtInput.Text, txtPassword.Text); _logService.AddLog(_currentUser, "Text", "TEXT_DECRYPT"); }
+            catch { MessageBox.Show("Parola gresita!"); }
         }
 
-        // =========================================================
-        // TAB 1: FISIERE (Logic pentru Fisiere)
-        // =========================================================
-
+        // --- BUTOANE FISIERE ---
         private void btnBrowseFile_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
-            {
-                ofd.Title = "Alege un fisier";
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    txtFilePath.Text = ofd.FileName;
-                }
-            }
+            using (OpenFileDialog ofd = new OpenFileDialog()) if (ofd.ShowDialog() == DialogResult.OK) txtFilePath.Text = ofd.FileName;
         }
 
         private void btnEncryptFile_Click(object sender, EventArgs e)
         {
-            string inputFile = txtFilePath.Text;
-            string password = txtFilePass.Text;
-
-            if (string.IsNullOrEmpty(inputFile) || !File.Exists(inputFile))
-            {
-                MessageBox.Show("Te rog alege un fisier valid!", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Validare Parola
-            if (!IsPasswordSecure(password)) return;
-
-            try
-            {
-                string outputFile = inputFile + ".enc";
-                _aesService.EncryptFile(inputFile, outputFile, password);
-
-                string fileNameOnly = Path.GetFileName(inputFile);
-                _logService.AddLog(_currentUser, fileNameOnly, "FILE_ENCRYPT");
-
-                MessageBox.Show($"Fisier criptat cu succes!\nSalvat ca: {outputFile}", "Succes", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Eroare la criptare: " + ex.Message);
-            }
+            if (!File.Exists(txtFilePath.Text)) return;
+            if (!IsPasswordSecure(txtFilePass.Text)) return;
+            try { _aesService.EncryptFile(txtFilePath.Text, txtFilePath.Text + ".enc", txtFilePass.Text); _logService.AddLog(_currentUser, Path.GetFileName(txtFilePath.Text), "FILE_ENCRYPT"); MessageBox.Show("Done!"); }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
         private void btnDecryptFile_Click(object sender, EventArgs e)
         {
-            string inputFile = txtFilePath.Text;
-            string password = txtFilePass.Text;
-
-            if (string.IsNullOrEmpty(inputFile) || !File.Exists(inputFile))
-            {
-                MessageBox.Show("Alege fisierul .enc!", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (!inputFile.EndsWith(".enc"))
-            {
-                MessageBox.Show("Te rog selecteaza un fisier care se termina in .enc", "Atentie", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Validare Parola
-            if (!IsPasswordSecure(password)) return;
-
+            if (!File.Exists(txtFilePath.Text) || !txtFilePath.Text.EndsWith(".enc")) return;
+            if (!IsPasswordSecure(txtFilePass.Text)) return;
             try
             {
-                string outputFile = inputFile.Substring(0, inputFile.Length - 4);
-
-                if (File.Exists(outputFile))
-                {
-                    outputFile = outputFile + ".decrypted";
-                }
-
-                _aesService.DecryptFile(inputFile, outputFile, password);
-
-                string fileNameOnly = Path.GetFileName(inputFile);
-                _logService.AddLog(_currentUser, fileNameOnly, "FILE_DECRYPT");
-
-                MessageBox.Show($"Fisier decriptat cu succes!\nSalvat ca: {outputFile}", "Succes", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                string outFile = txtFilePath.Text.Substring(0, txtFilePath.Text.Length - 4);
+                if (File.Exists(outFile)) outFile += ".decrypted";
+                _aesService.DecryptFile(txtFilePath.Text, outFile, txtFilePass.Text);
+                _logService.AddLog(_currentUser, Path.GetFileName(txtFilePath.Text), "FILE_DECRYPT");
+                MessageBox.Show("Done!");
             }
-            catch (CryptographicException)
-            {
-                MessageBox.Show("Parola gresita!", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Eroare: " + ex.Message);
-            }
+            catch { MessageBox.Show("Parola gresita!"); }
         }
 
-        // =========================================================
-        // TAB 3: ISTORIC
-        // =========================================================
+        // --- ISTORIC ---
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            try
+            bool isAdmin = _currentUser.Equals("admin", StringComparison.OrdinalIgnoreCase);
+            gridHistory.DataSource = _logService.GetLogs(_currentUser, isAdmin);
+        }
+
+        private void btnDeleteUser_Click(object sender, EventArgs e)
+        {
+            if (!_currentUser.Equals("admin", StringComparison.OrdinalIgnoreCase)) return;
+            if (gridHistory.SelectedRows.Count == 0 && gridHistory.CurrentRow == null) return;
+
+            var row = gridHistory.SelectedRows.Count > 0 ? gridHistory.SelectedRows[0] : gridHistory.CurrentRow;
+            if (row == null) return;
+            string user = row.Cells["Username"].Value.ToString();
+
+            if (user.ToLower() == "admin") { MessageBox.Show("Nu poti sterge adminul!"); return; }
+
+            if (MessageBox.Show($"Stergi pe {user}?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                var logs = _logService.GetLogs();
-                gridHistory.DataSource = logs;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Eroare la incarcarea istoricului: " + ex.Message);
+                _logService.DeleteUserAndHistory(user);
+                btnRefresh.PerformClick();
             }
         }
 
-        // =========================================================
-        // Navigatie si Inchidere (Butoanele tale personalizate)
-        // =========================================================
-
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            Application.Exit();
-        }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-        }
-
-        private void button1_Click(object sender, EventArgs e) // Butonul X
-        {
-            Application.Exit();
-        }
-
-        private void button2_Click(object sender, EventArgs e) // Tab Files
-        {
-            tabControl1.SelectedIndex = 0;
-        }
-
-        private void button3_Click(object sender, EventArgs e) // Tab Text
-        {
-            tabControl1.SelectedIndex = 1;
-        }
-
-        private void button4_Click(object sender, EventArgs e) // Tab History
-        {
-            tabControl1.SelectedIndex = 2;
-        }
+        // --- NAVIGATIE & CONTROL ---
+        private void MainForm_Load(object sender, EventArgs e) { } 
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e) => Application.Exit();
+        private void button1_Click(object sender, EventArgs e) => Application.Exit();
+        private void button2_Click(object sender, EventArgs e) => tabControl1.SelectedIndex = 0;
+        private void button3_Click(object sender, EventArgs e) => tabControl1.SelectedIndex = 1;
+        private void button4_Click(object sender, EventArgs e) { tabControl1.SelectedIndex = 2; btnRefresh.PerformClick(); }
     }
 }
